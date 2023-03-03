@@ -1,13 +1,13 @@
 import PropTypes from 'prop-types';
+import { Item, Button } from './ContactListItem.styled';
 
 export function ContactListItem({ contacts, deleteItem}) {
     return (
         contacts.map(({ name, number, id }) => {
             return (
-                <li key={id}>{name}:{number}<button onClick={() => { deleteItem(id) }} type='button'>Delete</button></li>
+                <Item key={id}>{name}: {number}<Button onClick={() => { deleteItem(id) }} type='button'>Delete</Button></Item>
             );
         })
-                
     );
 };
 

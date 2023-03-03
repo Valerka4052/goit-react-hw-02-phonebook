@@ -1,7 +1,10 @@
 import { Component } from "react";
 import { nanoid } from "nanoid";
 import PropTypes from 'prop-types';
+import * as Yup from 'yup';
+import { Form, Formik, Field, ErrorMessage, Label, Button } from './ContactForm.styled';
 
+ 
 export class ContactForm extends Component{
 
     static propTypes = {
@@ -15,63 +18,61 @@ export class ContactForm extends Component{
         ).isRequired,
     };
 
-    state = {
-        name: '',
-        number: '',
-        id: nanoid(),
-    };
-    
-    getInputValues = (e) => {
-        const key = e.target.name;
-        const value = e.target.value;
-        this.setState({ [key]: value });
-    };
-
-    getValues = (e) => {
-        e.preventDefault();
-        if (this.state.name === '' || this.state.number === '') {
-            return
+    getValues = (inputValues) => {
+        if (inputValues.name === '' || inputValues.number === '') {
+            return;
         } else if (this.props.contacts.find((contact) => {
-            return contact.name === this.state.name
+            return contact.name === inputValues.name;
         })) {
-            return alert(`${this.state.name} is already in contacts`);
-        }else{
-        this.props.getStateValues(this.state);
-            this.reset();
-        };
-    };
-
-    reset = () => {
-        this.setState({
-            name: '',
-            number: '',
-            id: nanoid(),
-        });
+            return alert(`${inputValues.name} is already in contacts`);
+        } else {
+            const contact = {
+                name: inputValues.name,
+                number: inputValues.number,
+                id: nanoid(),
+            };
+            this.props.getStateValues(contact);
+            inputValues.name = '';
+            inputValues.number = '';
+            };
     };
 
     render() {
-        const { name, number } = this.state;
+
+        const values = {
+            name: '',
+            number: '',
+        };
+        
+        const phoneSchema = Yup.number()
+            .typeError("That doesn't look like a phone number")
+            .positive("A phone number can't start with a minus")
+            .integer("A phone number can't include a decimal point")
+            .min(5)
+            .required('A phone number is required');
+        
+        const validationSchema = Yup.object({
+            name: Yup.string().required(),
+            number: phoneSchema,
+        });
+
+        const submitForm = (values) => {
+            this.getValues(values);
+        };
+        
+
         return (
-            <form>
-                <label />Name<input
-                    onChange={this.getInputValues}
-                    value={name}
-                    type="text"
-                    name="name"
-                    pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-                    title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-                    required /><label />
-                <label>Number<input
-                    onChange={this.getInputValues}
-                    value={number}
-                    type="tel"
-                    name="number"
-                    pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-                    title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-                    required
-                /></label>
-                <button type="submit" onClick={this.getValues}>add contact</button>
-            </form>
+            <Formik
+                initialValues={values}
+                onSubmit={submitForm}
+                validationSchema={validationSchema}
+            >
+                <Form>
+                    <Label>Name<Field name="name" /><ErrorMessage name="name" component="p" /></Label>
+                    <Label>Number<Field name="number" /><ErrorMessage name="number" type="number" component="p" /></Label>
+                    <Button type="submit">add contact</Button>
+                </Form>
+            </Formik>
         );
     };
 };

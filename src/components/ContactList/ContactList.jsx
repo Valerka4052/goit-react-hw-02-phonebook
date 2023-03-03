@@ -1,6 +1,7 @@
 import { ContactListItem } from 'components/ContactListItem/ContactListItem';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import { List } from './ContactList.styled';
 
 
 export class ContactList extends Component {
@@ -25,7 +26,7 @@ export class ContactList extends Component {
     render() {
         const { contacts, filteredContacts, deleteItem } = this.props;
         return (
-            <ul>
+            <List>
                 {filteredContacts.length ?
                     <ContactListItem
                         contacts={filteredContacts}
@@ -35,7 +36,7 @@ export class ContactList extends Component {
                         contacts={contacts}
                         deleteItem={deleteItem}
                     />}
-            </ul>
+            </List>
         );
     };
 };
