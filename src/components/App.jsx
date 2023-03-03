@@ -61,6 +61,7 @@ export class App extends Component {
             />
           </div>
           <ContactList
+            filter={filter}
             filteredContacts={filteredContacts}
             contacts={contacts}
             deleteItem={deleteItem} />

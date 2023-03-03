@@ -6,6 +6,7 @@ import { List } from './ContactList.styled';
 
 export class ContactList extends Component {
     static propTypes = {
+        filter: PropTypes.string.isRequired,
         deleteItem: PropTypes.func.isRequired,
         filteredContacts: PropTypes.arrayOf(
             PropTypes.exact({
@@ -24,10 +25,10 @@ export class ContactList extends Component {
     };
 
     render() {
-        const { contacts, filteredContacts, deleteItem } = this.props;
+        const { contacts, filteredContacts, deleteItem, filter } = this.props;
         return (
             <List>
-                {filteredContacts.length ?
+                {filter !== '' ?
                     <ContactListItem
                         contacts={filteredContacts}
                         deleteItem={deleteItem}
