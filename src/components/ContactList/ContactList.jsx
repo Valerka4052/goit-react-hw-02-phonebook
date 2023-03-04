@@ -26,17 +26,28 @@ export class ContactList extends Component {
 
     render() {
         const { contacts, filteredContacts, deleteItem, filter } = this.props;
+         console.log(filteredContacts)
         return (
             <List>
-                {filter !== '' ?
-                    <ContactListItem
-                        contacts={filteredContacts}
-                        deleteItem={deleteItem}
-                    /> :
-                    <ContactListItem
-                        contacts={contacts}
-                        deleteItem={deleteItem}
-                    />}
+                {filter === '' ?
+                    contacts.map(({ name, number, id }) => {
+                        return <ContactListItem key={id}
+                            name={name}
+                            number={number}
+                            id={id}
+                            deleteItem={deleteItem}
+                        />
+                    })
+                    :
+                    filteredContacts.map(({ name, number, id }) => {
+                        return <ContactListItem key={id}
+                            name={name}
+                            number={number}
+                            id={id}
+                            deleteItem={deleteItem}
+                        />
+                    })
+                }
             </List>
         );
     };
